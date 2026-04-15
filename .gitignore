@@ -28,3 +28,6 @@ Thumbs.db
 .vscode/
 .idea/
 .claude/
+
+#ignore this folder
+reference/

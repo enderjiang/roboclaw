@@ -8,6 +8,7 @@ an optional Discord bot.
 
 ## System Architecture
 
+![Screenshot](docs/systemarchi.png)
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         CLOUD  (Railway / Render / Fly.io)          │
