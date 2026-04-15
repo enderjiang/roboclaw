@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Environment / credentials
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.secret
+secrets.json
+credentials.json
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Build output
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+.claude/
