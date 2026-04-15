@@ -1,11 +1,3 @@
-# RoboClaw
-
-> **Spatial AI for industrial applications — from hardware to software.**
-
-We are building the bridge between the physical world and intelligent software. RoboClaw is the robotic arm at the center of **OpenClaw**, a platform that gives AI agents a body: eyes, ears, and hands that can act in the real world without hardcoded instructions.
-
----
-
 ## Why RoboClaw?
 
 Industrial sensors today are good at one thing — running fixed, predictable routines. That works, until the world changes. We believe the next generation of automation should be able to *adapt*.
