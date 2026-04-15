@@ -1,62 +1,47 @@
 # RoboClaw
 
-Cloud-connected 6-DOF robot arm controller. The ESP32 connects out to a cloud relay
-server, which bridges it to a browser control panel, a REST API (for AI agents), and
-an optional Discord bot.
+> **Spatial AI for industrial applications — from hardware to software.**
+
+We are building the bridge between the physical world and intelligent software. RoboClaw is the robotic arm at the center of **OpenClaw**, a platform that gives AI agents a body: eyes, ears, and hands that can act in the real world without hardcoded instructions.
+
+---
+
+## Why RoboClaw?
+
+Industrial sensors today are good at one thing — running fixed, predictable routines. That works, until the world changes. We believe the next generation of automation should be able to *adapt*.
+
+RoboClaw is our answer to that problem. Starting from a redesigned **6-DOF robotic arm** on an ESP32, we are exploring what it looks like when a robot arm stops being a dumb executor and becomes a runtime-capable agent:
+
+- **Go beyond static data service** — the arm responds dynamically to real-world inputs, not just pre-programmed paths
+- **Runtime IO** — open the door to perception-action loops that don't require a firmware flash every time something changes
+- **Multi-sensory action** — voice, vision, and external triggers can all drive behavior without hardcoding logic into the device
+- **Scheduled real-world workflows** — cron-style jobs that do physical things, not just send notifications
+
+The goal is a system where an LLM can plan a task, generate a path, schedule it, and execute it through the arm — all without a human in the loop.
+
+---
+
+## OpenClaw Architecture
+
+RoboClaw is the **body** of OpenClaw. The full stack looks like this:
+
+**OpenClaw Brain** (cloud + AI layer)
+- Vision system and speech-to-text (SST)
+- LLM message routing and intent parsing
+- Path generation and skill composition
+- Cron-based scheduling for recurring physical workflows
+
+**RoboClaw Body** (this repo — ESP32 + servos)
+- 6-DOF arm with onboard inverse kinematics
+- WebSocket bridge to the cloud relay
+- Voice/audio input via spare GPIO pins
+- Real-time state broadcast to connected clients
 
 ---
 
 ## System Architecture
 
 ![Screenshot](docs/systemarchi.png)
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         CLOUD  (Railway / Render / Fly.io)          │
-│                                                                     │
-│   ┌───────────────────────────────────────────────────────────┐     │
-│   │                    backend/server.js                      │     │
-│   │                                                           │     │
-│   │   ┌──────────────┐    relay()    ┌────────────────────┐  │     │
-│   │   │  REST API    │◄─────────────►│  WebSocket Server  │  │     │
-│   │   │  POST /api/* │               │  /ws/esp32         │  │     │
-│   │   │  GET  /state │               │  /ws/browser       │  │     │
-│   │   └──────┬───────┘               └────────┬───────────┘  │     │
-│   │          │  auth middleware                │              │     │
-│   │   ┌──────▼───────┐               ┌────────▼───────────┐  │     │
-│   │   │  Sequence    │               │   Shared state     │  │     │
-│   │   │  executor    │               │   armState{}       │  │     │
-│   │   │  (async)     │               │   cmdLog[]         │  │     │
-│   │   └──────────────┘               └────────────────────┘  │     │
-│   │                                                           │     │
-│   │   ┌──────────────┐   Static files   frontend/index.html  │     │
-│   │   │  Express     │◄────────────────────────────────────  │     │
-│   │   │  HTTP server │                                        │     │
-│   │   └──────────────┘                                        │     │
-│   └───────────────────────────────────────────────────────────┘     │
-└─────────────────────────────────────────────────────────────────────┘
-         ▲                  ▲                      ▲
-         │ REST (HTTPS)     │ WebSocket (WSS)      │ WebSocket (WSS)
-         │                  │                      │
-  ┌──────┴──────┐   ┌───────┴──────┐    ┌──────────┴──────────┐
-  │  AI Agent   │   │   Browser    │    │   ESP32 Firmware    │
-  │  (Claude /  │   │  Control     │    │  firmware/          │
-  │   any HTTP) │   │  Panel       │    │  esp32_cloud_client │
-  │             │   │  (frontend/) │    │                     │
-  │  POST /api/ │   │  2D workspace│    │  WiFi STA mode      │
-  │  ik_move    │   │  canvas      │    │  PCA9685 servo      │
-  │  gripper    │   │  sliders     │    │  driver (I2C)       │
-  │  sequence   │   │  agent chat  │    │  IK solver (onboard)│
-  └─────────────┘   └──────────────┘    └─────────────────────┘
-
-  Optional:
-  ┌─────────────┐
-  │  Discord    │
-  │  Bot        │
-  │  !move x y z│
-  │  !home      │
-  │  !open/close│
-  └─────────────┘
-```
 
 ### Data flow
 
